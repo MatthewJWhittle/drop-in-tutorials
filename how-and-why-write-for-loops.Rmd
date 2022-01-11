@@ -2,7 +2,13 @@
 title: "For Loops"
 author: "Matthew Whittle"
 date: "11/01/2022"
-output: html_document
+output: 
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    highlight: tango
+    theme: paper
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +55,7 @@ With a for loop we can reduce this into a few lines of code with much less repet
 ```{r}
 # Store the top 6 baby names in a vector named baby_names
 baby_names <- c("Olivia", "Liam", "Emma", "Noah", "Amelia", "Oliver")
-# ITerate through each name in the vector
+# Iterate through each name in the vector
 for (name in baby_names) {
   # Generate a message using paste0 and print it out
   print(paste0("Hi ", name, "!"))
