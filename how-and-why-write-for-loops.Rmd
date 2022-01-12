@@ -17,6 +17,11 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
+```{r include=FALSE}
+library(tidyverse)
+```
+
+
 # Agenda
 
 -   What is a for loop?
@@ -63,7 +68,6 @@ for (name in baby_names) {
   print(paste0("Hi ", name, "!"))
 }
 ```
-
 ## What is happening here?
 
 1.  Store each name in a vector called baby_names so that it can be accessed within the for loop
@@ -127,7 +131,7 @@ iris_data <- bind_rows(data)
 iris_data
 ```
 
-Now we can calculate summary statistics and make a graph using the dplyr and ggplot pacakges
+Now we can calculate summary statistics and make a graph using the dplyr and ggplot packages
 
 ```{r}
 # Group the data by species and calculate the mean value for each statistic
@@ -177,4 +181,100 @@ library(purrr)
 
 data <- map(files, read.csv)
 bind_rows(data)
+```
+
+## Apply Functions
+
+You can also iterate over objects in R by using the *apply functions. For 
+example, we could use the following expression to print each item of the 
+`baby_names` vector.
+
+```{r}
+invisible(sapply(baby_names, print))
+```
+
+In the example above, we're using the `sapply()` function to iterate through 
+our vector, applying the `print()` function to each item. Don't worry too much 
+about `invisible()` - we're just using that to hide the output of `sapply()` 
+itself. Try running it without to see the difference. 
+
+We can also use our own functions as in the following example.
+
+```{r}
+greet_baby <- function(name){
+  cat(paste("Hello", name, "\n"))
+}
+
+invisible(sapply(baby_names, greet_baby))
+
+```
+### Anonymous Functions
+
+Sometimes, for simple operations, it can be neater to use an anonymous 
+function. Like this...
+
+```{r}
+invisible(sapply(baby_names, function(x) cat(paste("Hello", x, "\n"))))
+```
+In this case, as `sapply()` iterates over `baby_names`, it passes each item as 
+`x` to the anonymous function we have defined.
+
+### lapply
+
+The `lapply()` function returns a list the same length as its input. Consider 
+the following example of reading several `.csv` files into a single data frame.
+
+```{r}
+iris_data <- 
+  files %>% # A vector of paths to our files 
+  lapply(read_csv) %>% # Returns a list of dataframes
+  bind_rows() # Bind into a single data frame
+
+iris_data
+```
+Using apply functions (along with the pipe `%>%` operator) can make for more 
+concise, readable code.
+
+### Multiple Inputs - mapply
+
+If you need to iterate over multiple inputs, you can use `mapply()`. For 
+example, consider the following `for()` loop iterating over two vectors: 
+`baby_names`, and `greeting`.
+
+```{r}
+
+greeting <- c("Hello", 
+              "Welcome", 
+              "Oh - it's", 
+              "Na then", 
+              "Ey up", 
+              "Ow do")
+
+for(i in seq_along(baby_names)){
+  cat(paste(greeting[i], baby_names[i], "\n"))
+}
+
+```
+We can do the same using `mapply()`, defining an anonymous function which takes 
+two arguments `x`, and `y`.
+
+```{r}
+
+invisible(
+  mapply(function(x, y) cat(paste(x, y, "\n")), 
+         x = greeting, 
+         y = baby_names)
+)
+
+```
+Additional arguments which are not vectorised can be submitted as a list in 
+`MoreArgs`.
+
+```{r}
+
+invisible(mapply(function(x, y, z) cat(paste(x, y, z, "\n")), 
+       x = greeting, 
+       y = baby_names, 
+       MoreArgs = list(z = "how are you?")))
+
 ```
